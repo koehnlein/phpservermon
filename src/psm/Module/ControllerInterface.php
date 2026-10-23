@@ -30,12 +30,18 @@
 namespace psm\Module;
 
 use psm\Service\Database;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-interface ControllerInterface extends ContainerAwareInterface
+interface ControllerInterface
 {
 
-    public function __construct(Database $db, \Twig_Environment $twig);
+    public function __construct(Database $db, \Twig\Environment $twig);
+
+    /**
+     * Set the service container
+     * @param \Symfony\Component\DependencyInjection\ContainerInterface|null $container
+     */
+    public function setContainer(?ContainerInterface $container = null);
 
     /**
      * Run the controller

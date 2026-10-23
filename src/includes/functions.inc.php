@@ -372,7 +372,7 @@ namespace {
         $vars['date'] = date('Y-m-d H:i:s');
 
         foreach ($vars as $k => $v) {
-            $message = str_replace('%' . strtoupper($k) . '%', $v, $message);
+            $message = str_replace('%' . strtoupper($k) . '%', (string) $v, $message);
         }
 
         return $message;
@@ -459,7 +459,6 @@ namespace {
         $result['exec'] = curl_exec($ch);
         $result['info'] = curl_getinfo($ch);
 
-        curl_close($ch);
     
         if (defined('PSM_DEBUG') && PSM_DEBUG === true && psm_is_cli()) {
             echo PHP_EOL .
@@ -490,18 +489,13 @@ namespace {
         if ($time < strtotime(date('Y-m-d 00:00:00')) - 60 * 60 * 24 * 3) {
             $format = psm_get_lang('system', (date('Y') !== date('Y', $time)) ?
             'long_day_format' : 'short_day_format');
-            // Check for Windows to find and replace the %e
-            // modifier correctly
-            if (strtoupper(substr(PHP_OS, 0, 3)) == 'WIN') {
-                $format = preg_replace('#(?<!%)((?:%%)*)%e#', '\1%#d', $format);
-            }
-            return strftime($format, $time);
+            return psm_strftime($format, $time);
         }
         $d = time() - $time;
         if ($d >= 60 * 60 * 24) {
             $format = psm_get_lang('system', (date('l', time() - 60 * 60 * 24) == date('l', $time)) ?
             'yesterday_format' : 'other_day_format');
-            return strftime($format, $time);
+            return psm_strftime($format, $time);
         }
         if ($d >= 60 * 60 * 2) {
             return sprintf(psm_get_lang('system', 'hours_ago'), intval($d / (60 * 60)));
@@ -532,7 +526,70 @@ namespace {
         if (empty($time) || $time == '0000-00-00 00:00:00') {
             return psm_get_lang('system', 'never');
         }
-        return strftime('%x %X', strtotime($time));
+        return psm_strftime('%x %X', strtotime($time));
+    }
+
+/**
+ * Format a timestamp using a strftime() format string.
+ *
+ * Replacement for strftime(), which is deprecated as of PHP 8.1.
+ * Uses the intl extension for localised output, if available.
+ * @param string $format strftime() format
+ * @param int $time
+ * @return string
+ */
+    function psm_strftime($format, $time)
+    {
+        $locale = psm_get_lang('locale');
+        $locale = is_array($locale) && isset($locale[1]) ? $locale[1] : 'en_US';
+        $intl = class_exists('IntlDateFormatter');
+
+        return preg_replace_callback(
+            '/%([a-zA-Z%])/',
+            function ($match) use ($time, $locale, $intl) {
+                if ($intl) {
+                    $patterns = array(
+                        'a' => 'EEE', 'A' => 'EEEE', 'b' => 'MMM', 'B' => 'MMMM', 'h' => 'MMM',
+                        'd' => 'dd', 'e' => 'd', 'j' => 'D', 'm' => 'MM', 'y' => 'yy', 'Y' => 'y',
+                        'H' => 'HH', 'k' => 'H', 'I' => 'hh', 'l' => 'h', 'M' => 'mm', 'S' => 'ss',
+                        'p' => 'a',
+                    );
+                    if (isset($patterns[$match[1]])) {
+                        $formatter = new IntlDateFormatter(
+                            $locale,
+                            IntlDateFormatter::NONE,
+                            IntlDateFormatter::NONE,
+                            date_default_timezone_get(),
+                            null,
+                            $patterns[$match[1]]
+                        );
+                        return $formatter->format($time);
+                    }
+                    if ($match[1] === 'x' || $match[1] === 'X') {
+                        $formatter = new IntlDateFormatter(
+                            $locale,
+                            $match[1] === 'x' ? IntlDateFormatter::SHORT : IntlDateFormatter::NONE,
+                            $match[1] === 'X' ? IntlDateFormatter::MEDIUM : IntlDateFormatter::NONE,
+                            date_default_timezone_get()
+                        );
+                        return $formatter->format($time);
+                    }
+                }
+                $formats = array(
+                    'a' => 'D', 'A' => 'l', 'b' => 'M', 'B' => 'F', 'h' => 'M',
+                    'd' => 'd', 'e' => 'j', 'j' => 'z', 'm' => 'm', 'y' => 'y', 'Y' => 'Y',
+                    'H' => 'H', 'k' => 'G', 'I' => 'h', 'l' => 'g', 'M' => 'i', 'S' => 's',
+                    'p' => 'A', 'x' => 'Y-m-d', 'X' => 'H:i:s', 'n' => "\n", 't' => "\t", '%' => '%',
+                );
+                if (!isset($formats[$match[1]])) {
+                    return $match[0];
+                }
+                $value = date($formats[$match[1]], $time);
+                // date('z') is zero-based, strftime('%j') is one-based and zero-padded
+                return $match[1] === 'j' ? sprintf('%03d', $value + 1) : $value;
+            },
+            $format
+        );
     }
 
 /**
@@ -663,48 +720,36 @@ namespace {
      * @param string      $message
      * @param int|null    $port
      * @param string|null $domain
+     * @return bool
      */
     function psm_jabber_send_message($host, $username, $password, $receivers, $message, $port = null, $domain = null)
     {
-        $options = [
-            'jid' => $username, // incl. gmail.com
-            'pass' => $password,
-            'domain' => $domain, // gmail.com or null
-            'host' => $host, // talk.google.com
-            'port' => $port, // talk.google.com needs to have 5223 ... 5222 - CN problem - gmail.com vs talk.google.com
-            'log_path' => __DIR__ . '/../../logs/jaxl.log', // own log
-
-            // force tls
-            'force_tls' => PSM_JABBER_FORCE_TLS,
-            // (required) perform X-OAUTH2
-            'auth_type' => PSM_JABBER_AUTH_TYPE, //'X-OAUTH2', // auth failure with this option :( so just PLAIN ...
-
-            'log_level' => PSM_JABBER_DEBUG_LEVEL
-        ];
+        $client = new \psm\Util\Xmpp\XmppClient(
+            $host,
+            $username,
+            $password,
+            $port,
+            $domain,
+            PSM_JABBER_FORCE_TLS,
+            PSM_JABBER_AUTH_TYPE
+        );
 
         try {
-            $client = new JAXL($options);
-
-            // Add Callbacks
-            $client->add_cb('on_auth_success', function () use ($client, $receivers, $message) {
-                JAXLLogger::info('got on_auth_success cb');
-                foreach ($receivers as $receiver) {
-	                $client->send_chat_msg($receiver, $message);
-                }
-                $client->send_end_stream();
-            });
-            $client->add_cb('on_auth_failure', function ($reason) use ($client) {
-                $client->send_end_stream();
-                JAXLLogger::info('got on_auth_failure cb with reason: ' . $reason);
-            });
-            $client->add_cb('on_disconnect', function () use ($client) {
-                JAXLLogger::info('got on_disconnect cb');
-            });
-
-            $client->start();
-        } catch (Exception $ex) {
-            JAXLLogger::error('Exception: ' . $ex->getMessage());
+            $client->connect();
+            foreach ($receivers as $receiver) {
+                $client->sendMessage($receiver, $message);
+            }
+            $client->disconnect();
+        } catch (\RuntimeException $ex) {
+            $client->disconnect();
+            error_log(
+                date('Y-m-d H:i:s') . ' - ' . $ex->getMessage() . PHP_EOL,
+                3,
+                __DIR__ . '/../../logs/jabber.log'
+            );
+            return false;
         }
+        return true;
     }
 
 /**

@@ -4,7 +4,11 @@ Changelog
 
 Not yet released
 ----------------
-\-
+
+* PHP 8 compatibility (PHP 8.2+ required, tested with PHP 8.5).
+* Updated dependencies to Symfony 7.4, Twig 3 and PHPMailer 6.12.
+* Replaced the abandoned JAXL library with a built-in XMPP client for Jabber notifications.
+* Fixed Jabber notifications not being sent for status changes.
 
 v3.5.2 (released August 12, 2020)
 -----------------------------

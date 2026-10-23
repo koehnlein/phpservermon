@@ -29,16 +29,18 @@
 
 namespace psm\Util\Server;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Run an update on all servers.
  */
-class UpdateManager implements ContainerAwareInterface
+class UpdateManager
 {
-    use ContainerAwareTrait;
+    /**
+     * Service container
+     * @var \Symfony\Component\DependencyInjection\ContainerInterface $container
+     */
+    protected $container;
 
     public function __construct(ContainerInterface $container)
     {

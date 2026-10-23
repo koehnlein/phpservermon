@@ -89,7 +89,6 @@ class Octopush extends Core
                 ". \nResult: " . $xmlResults->error_code .
                 ". Look at http://www.octopush-dm.com/en/errors for the error description.";
         }
-        curl_close($curl);
         
         if ($success) {
             return 1;

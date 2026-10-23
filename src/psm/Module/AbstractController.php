@@ -30,11 +30,15 @@ namespace psm\Module;
 
 use psm\Service\Database;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class AbstractController implements ControllerInterface
 {
-    use ContainerAwareTrait;
+    /**
+     * Service container
+     * @var \Symfony\Component\DependencyInjection\ContainerInterface $container
+     */
+    protected $container;
 
     /**
      * Current action
@@ -109,7 +113,7 @@ abstract class AbstractController implements ControllerInterface
 
     /**
      * Twig object
-     * @var \Twig_Environment $twig
+     * @var \Twig\Environment $twig
      */
     protected $twig;
 
@@ -146,7 +150,7 @@ abstract class AbstractController implements ControllerInterface
      */
     protected $xhr = false;
 
-    public function __construct(Database $db, \Twig_Environment $twig)
+    public function __construct(Database $db, \Twig\Environment $twig)
     {
         $this->db = $db;
         $this->twig = $twig;
@@ -519,6 +523,15 @@ abstract class AbstractController implements ControllerInterface
     public function getCSRFKey()
     {
         return $this->csrf_key;
+    }
+
+    /**
+     * Set the service container
+     * @param \Symfony\Component\DependencyInjection\ContainerInterface|null $container
+     */
+    public function setContainer(?ContainerInterface $container = null)
+    {
+        $this->container = $container;
     }
 
     /**

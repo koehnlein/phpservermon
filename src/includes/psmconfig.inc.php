@@ -135,10 +135,6 @@ if (defined('PSM_JABBER_FORCE_TLS') === false) {
     define('PSM_JABBER_FORCE_TLS', true);
 }
 if (defined('PSM_JABBER_AUTH_TYPE') === false) {
-    // possible values: PLAIN, X-OAUTH2, DIGEST-MD5, CRAM-MD5, SCRAM-SHA-1, ANONYMOUS, EXTERNAL
-    define('PSM_JABBER_AUTH_TYPE', 'PLAIN'); // default just plain because of google for example :(
-}
-if (defined('PSM_JABBER_DEBUG_LEVEL') === false) {
-    // possible values: ERROR, WARNING, NOTICE, INFO, DEBUG
-    define('PSM_JABBER_DEBUG_LEVEL', JAXLLogger::WARNING);
+    // possible values: PLAIN, X-OAUTH2
+    define('PSM_JABBER_AUTH_TYPE', 'PLAIN');
 }

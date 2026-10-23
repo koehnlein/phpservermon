@@ -45,11 +45,11 @@ class HistoryGraph
 
     /**
      * Twig environment
-     * @var \Twig_Environment $twig
+     * @var \Twig\Environment $twig
      */
     protected $twig;
 
-    public function __construct(Database $db, \Twig_Environment $twig)
+    public function __construct(Database $db, \Twig\Environment $twig)
     {
         $this->db = $db;
         $this->twig = $twig;
@@ -298,7 +298,9 @@ class HistoryGraph
         // Record the first and last date as a string in the down array
         $prev_downtime == 0 ?: $downtime += ($now->getTimestamp() - $prev_downtime);
         if ($add_uptime) {
-            $prev['status'] ?: $lines['offline'][] = '{ x: ' . ($now->getTimestamp() * 1000) . ', y:0.1}';
+            if (empty($prev['status'])) {
+                $lines['offline'][] = '{ x: ' . ($now->getTimestamp() * 1000) . ', y:0.1}';
+            }
             $data['uptime'] = 100 - ($downtime / ($end_time->getTimestamp() - $start_time->getTimestamp()));
         }
 
