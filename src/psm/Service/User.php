@@ -186,10 +186,17 @@ class User
     private function loginWithCookieData()
     {
         if (isset($_COOKIE['rememberme'])) {
-            // extract data from the cookie
-            list ($user_id, $token, $hash) = explode(':', $_COOKIE['rememberme']);
+            // extract data from the cookie, it might be malformed (e.g. set by another application)
+            $parts = is_string($_COOKIE['rememberme']) ? explode(':', $_COOKIE['rememberme']) : array();
+            if (count($parts) !== 3) {
+                $parts = array('', '', '');
+            }
+            list ($user_id, $token, $hash) = $parts;
             // check cookie hash validity
-            if ($hash == hash('sha256', $user_id . ':' . $token . PSM_LOGIN_COOKIE_SECRET_KEY) && !empty($token)) {
+            if (
+                !empty($token) &&
+                hash_equals(hash('sha256', $user_id . ':' . $token . PSM_LOGIN_COOKIE_SECRET_KEY), $hash)
+            ) {
                 // cookie looks good, try to select corresponding user
                 // get real token from database (and all other data)
                 $user = $this->getUser($user_id);

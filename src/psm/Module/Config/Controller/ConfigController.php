@@ -343,7 +343,6 @@ class ConfigController extends AbstractController
     protected function testPushover()
     {
         $pushover = psm_build_pushover();
-        $pushover->setDebug(true);
         $user = $this->getUser()->getUser();
         $apiToken = psm_get_conf('pushover_api_token');
 
@@ -361,11 +360,11 @@ class ConfigController extends AbstractController
             }
             $result = $pushover->send();
 
-            if (isset($result['output']->status) && $result['output']->status == 1) {
+            if (isset($result->status) && $result->status == 1) {
                 $this->addMessage(psm_get_lang('config', 'pushover_sent'), 'success');
             } else {
-                if (isset($result['output']->errors->error)) {
-                    $error = $result['output']->errors->error;
+                if (!empty($result->errors)) {
+                    $error = implode(', ', (array) $result->errors);
                 } else {
                     $error = 'Unknown';
                 }

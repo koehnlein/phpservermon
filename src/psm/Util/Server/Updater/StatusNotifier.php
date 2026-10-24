@@ -476,9 +476,8 @@ class StatusNotifier
 
             // Set recipient + send
             $pushover->setUser($user['pushover_key']);
-            if ($user['pushover_device'] != '') {
-                $pushover->setDevice($user['pushover_device']);
-            }
+            // always set the device, otherwise the device of the previous user would be used
+            $pushover->setDevice($user['pushover_device']);
             $pushover->send();
         }
     }

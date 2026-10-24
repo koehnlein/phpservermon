@@ -688,11 +688,11 @@ namespace {
 /**
  * Prepare a new Pushover util.
  *
- * @return \Pushover
+ * @return \psm\Util\Pushover\Pushover
  */
     function psm_build_pushover()
     {
-        $pushover = new \Pushover();
+        $pushover = new \psm\Util\Pushover\Pushover();
         $pushover->setToken(psm_get_conf('pushover_api_token'));
 
         return $pushover;
