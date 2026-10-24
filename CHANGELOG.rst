@@ -13,6 +13,7 @@ v3.6.0 (not yet released)
   Supported authentication types are PLAIN and X-OAUTH2, port 5223 uses direct TLS,
   PSM_JABBER_DEBUG_LEVEL has been removed and errors are logged to logs/jabber.log.
 * Fixed Jabber notifications not being sent for status changes.
+* Fixed PHP warnings and "headers already sent" errors caused by a malformed rememberme cookie.
 * Added DDEV configuration for local testing (PHP 8.5, MariaDB 11.8).
 
 v3.5.2 (released August 12, 2020)
