@@ -39,7 +39,7 @@ class UserController extends AbstractController
 {
     public $servers = array();
 
-    public function __construct(Database $db, \Twig_Environment $twig)
+    public function __construct(Database $db, \Twig\Environment $twig)
     {
         parent::__construct($db, $twig);
 
@@ -319,8 +319,8 @@ class UserController extends AbstractController
             $event = \psm\Module\User\UserEvents::USER_ADD;
         }
         $this->container->get('event')->dispatch(
-            $event,
-            new \psm\Module\User\Event\UserEvent($user_id, $this->getUser()->getUserId())
+            new \psm\Module\User\Event\UserEvent($user_id, $this->getUser()->getUserId()),
+            $event
         );
         if (isset($password)) {
             $this->getUser()->changePassword($user_id, $password);
@@ -367,8 +367,8 @@ class UserController extends AbstractController
                 $this->db->delete(PSM_DB_PREFIX . 'users_servers', array('user_id' => $id));
 
                 $this->container->get('event')->dispatch(
-                    \psm\Module\User\UserEvents::USER_DELETE,
-                    new \psm\Module\User\Event\UserEvent($id, $this->getUser()->getUserId())
+                    new \psm\Module\User\Event\UserEvent($id, $this->getUser()->getUserId()),
+                    \psm\Module\User\UserEvents::USER_DELETE
                 );
 
                 $this->addMessage(psm_get_lang('users', 'deleted'), 'success');

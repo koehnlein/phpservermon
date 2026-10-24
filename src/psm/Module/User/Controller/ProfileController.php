@@ -41,7 +41,7 @@ class ProfileController extends AbstractController
     protected $profile_fields =
         array('name', 'user_name', 'email', 'mobile', 'pushover_key', 'pushover_device', 'telegram_id', 'jabber');
 
-    public function __construct(Database $db, \Twig_Environment $twig)
+    public function __construct(Database $db, \Twig\Environment $twig)
     {
         parent::__construct($db, $twig);
 
@@ -152,8 +152,8 @@ class ProfileController extends AbstractController
 
         $this->db->save(PSM_DB_PREFIX . 'users', $clean, array('user_id' => $this->getUser()->getUserId()));
         $this->container->get('event')->dispatch(
-            \psm\Module\User\UserEvents::USER_EDIT,
-            new \psm\Module\User\Event\UserEvent($this->getUser()->getUserId())
+            new \psm\Module\User\Event\UserEvent($this->getUser()->getUserId()),
+            \psm\Module\User\UserEvents::USER_EDIT
         );
         if (isset($password)) {
             $this->getUser()->changePassword($this->getUser()->getUserId(), $password);

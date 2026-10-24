@@ -5,7 +5,12 @@ PHP Server Monitor
    :alt: Join the chat at https://gitter.im/erickrf/nlpnet
    :target: https://gitter.im/phpservermon/phpservermon
 
-Version 3.5.2
+Version 3.6.0-dev
+
+.. warning::
+
+   This version contains a vibe-coded compatibility update for PHP 8, created with the help of an AI assistant.
+   It has been tested, but not reviewed as thoroughly as a regular release. Use it at your own risk.
 
 PHP Server Monitor is a script that checks whether your websites and servers are up and running.
 It comes with a web based user interface where you can manage your services and websites,
@@ -77,11 +82,11 @@ Requirements
 
 * Web server
 * MySQL database
-* For PHP5: 5.6.0+
-* For PHP7: 7.0.8+
+* PHP 8.2+ (tested up to PHP 8.5)
 * PHP cURL package
 * PHP PDO mysql driver
 * PHP-XML
+* PHP intl extension (recommended, for localised dates)
 
 
 Install

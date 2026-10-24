@@ -89,7 +89,7 @@ class User
      * @param \psm\Service\Database $db
      * @param \Symfony\Component\HttpFoundation\Session\SessionInterface $session if NULL, one will be created
      */
-    public function __construct(Database $db, SessionInterface $session = null)
+    public function __construct(Database $db, ?SessionInterface $session = null)
     {
         $this->db_connection = $db->pdo();
 
@@ -290,7 +290,7 @@ class User
         $cookie_string = $cookie_string_first_part . ':' . $cookie_string_hash;
 
         // set cookie
-        setcookie('rememberme', $cookie_string, time() + PSM_LOGIN_COOKIE_RUNTIME, "/", PSM_LOGIN_COOKIE_DOMAIN);
+        setcookie('rememberme', $cookie_string, time() + PSM_LOGIN_COOKIE_RUNTIME, "/", (string) PSM_LOGIN_COOKIE_DOMAIN);
     }
 
     /**
@@ -308,7 +308,7 @@ class User
         // set the rememberme-cookie to ten years ago (3600sec * 365 days * 10).
         // that's obivously the best practice to kill a cookie via php
         // @see http://stackoverflow.com/a/686166/1114320
-        setcookie('rememberme', false, time() - (3600 * 3650), '/', PSM_LOGIN_COOKIE_DOMAIN);
+        setcookie('rememberme', '', time() - (3600 * 3650), '/', (string) PSM_LOGIN_COOKIE_DOMAIN);
     }
 
     /**
