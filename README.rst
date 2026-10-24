@@ -7,6 +7,11 @@ PHP Server Monitor
 
 Version 3.6.0-dev
 
+.. warning::
+
+   This version contains a vibe-coded compatibility update for PHP 8, created with the help of an AI assistant.
+   It has been tested, but not reviewed as thoroughly as a regular release. Use it at your own risk.
+
 PHP Server Monitor is a script that checks whether your websites and servers are up and running.
 It comes with a web based user interface where you can manage your services and websites,
 and you can manage users for each server with a mobile number and email address.

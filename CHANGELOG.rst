@@ -2,13 +2,18 @@ Changelog
 =========
 
 
-Not yet released
-----------------
+v3.6.0 (not yet released)
+-------------------------
 
 * PHP 8 compatibility (PHP 8.2+ required, tested with PHP 8.5).
-* Updated dependencies to Symfony 7.4, Twig 3 and PHPMailer 6.12.
+* Updated dependencies to Symfony 7.4, Twig 3 and PHPMailer 6.12, removed paragonie/random_compat.
+* Moved the service container configuration from XML to PHP (src/config/services.php).
+* Replaced the deprecated strftime() with the intl extension (recommended for localised dates).
 * Replaced the abandoned JAXL library with a built-in XMPP client for Jabber notifications.
+  Supported authentication types are PLAIN and X-OAUTH2, port 5223 uses direct TLS,
+  PSM_JABBER_DEBUG_LEVEL has been removed and errors are logged to logs/jabber.log.
 * Fixed Jabber notifications not being sent for status changes.
+* Added DDEV configuration for local testing (PHP 8.5, MariaDB 11.8).
 
 v3.5.2 (released August 12, 2020)
 -----------------------------
