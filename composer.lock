@@ -4,43 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "48ebeafe93ef54f886fd9e42793c3bab",
+    "content-hash": "357cdd9be2f5ca49154e42870eab158e",
     "packages": [
-        {
-            "name": "php-pushover/php-pushover",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/cschalenborgh/php-pushover.git",
-                "reference": "ef1df985bf3acb17b1f1f8fe2df2c3c9a16bef32"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/cschalenborgh/php-pushover/zipball/ef1df985bf3acb17b1f1f8fe2df2c3c9a16bef32",
-                "reference": "ef1df985bf3acb17b1f1f8fe2df2c3c9a16bef32",
-                "shasum": ""
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "files": [
-                    "Pushover.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Chris Schalenborgh",
-                    "email": "chris@schalenborgh.be"
-                }
-            ],
-            "description": "PHP class for the Pushover.net project",
-            "support": {
-                "issues": "https://github.com/cschalenborgh/php-pushover/issues",
-                "source": "https://github.com/cschalenborgh/php-pushover/tree/master"
-            },
-            "time": "2021-01-12T12:43:39+00:00"
-        },
         {
             "name": "phpmailer/phpmailer",
             "version": "v6.12.0",
@@ -1196,9 +1161,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "php-pushover/php-pushover": 20
-    },
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

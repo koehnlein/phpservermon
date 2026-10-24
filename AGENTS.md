@@ -14,7 +14,7 @@ compatibility update (version 3.6.0-dev). See `CHANGELOG.rst` for what changed.
 - PHP 8.2+ required, developed and tested with PHP 8.5.
 - MySQL/MariaDB via PDO.
 - Dependencies: Symfony 7.4 (DependencyInjection, EventDispatcher, HttpFoundation, Config,
-  Filesystem), Twig 3, PHPMailer 6, php-pushover (dev-master).
+  Filesystem), Twig 3, PHPMailer 6.
 - There are no automated tests. Verification means linting plus manual testing in DDEV (see below).
 
 ## Local development with DDEV
@@ -96,6 +96,7 @@ src/psm/                   namespace psm\ (PSR-4)
   Txtmsg/                  one class per SMS gateway
   Util/Server/             updaters (status checks, notifications), archivers, history graph
   Util/Xmpp/XmppClient.php built-in minimal XMPP client used for Jabber notifications
+  Util/Pushover/Pushover.php built-in minimal Pushover API client
 src/templates/default/     Twig templates and static assets
 ```
 
@@ -117,8 +118,11 @@ src/templates/default/     Twig templates and static assets
   minimum version. Keep it when updating dependencies.
 - Don't call `curl_close()` (deprecated in PHP 8.5). Cast possibly-null values before passing them
   to string functions (`htmlentities`, `str_replace`, `setcookie`, ...).
-- Known remaining deprecation: `php-pushover` (vendor) uses a `(boolean)` cast; only visible with
-  `PSM_DEBUG`, cannot be fixed without patching the package.
+- **Pushover:** the abandoned php-pushover library was replaced by `psm\Util\Pushover\Pushover`
+  (JSON API, TLS verification enabled), created via `psm_build_pushover()`.
+- With `PSM_DEBUG`, `bootstrap.php` enables `E_ALL` before the Composer autoloader runs, so any
+  deprecation in a `files`-autoloaded vendor file is printed before the headers. Check new
+  dependencies for that.
 - `src/includes/password_compatibility_library.inc.php` is unused legacy code.
 - `puphpet/` and `Vagrantfile` are the outdated upstream dev environment; use DDEV instead.
 
